@@ -1,0 +1,55 @@
+version: 1
+service:
+  name: Shopping Cart Service
+  lifecycle: generally_available
+  tier: tier_1
+  system: web
+  product: Retail Website
+  owner: order_management_team
+  language: Ruby
+  framework: Rails
+  description: Allows users to add/remove products in their virtual shopping carts
+    prior to placing an order.
+  aliases:
+  - cart
+  tags:
+  - key: db
+    value: mysql
+  - key: kafka-topic
+    value: cart-additions
+  repositories:
+  - name: DunderMifflin/shopping_cart
+    path: "/"
+    provider: github
+    display_name: Cart Service Code
+  - name: DunderMifflin/TerraformRepo
+    path: "/production/shopping_cart"
+    provider: bitbucket
+    display_name: Terraform Config
+  tools:
+  - name: Confluence
+    category: runbooks
+    url: http://company.atlassian.com/confluence/runbooks
+  - name: PagerDuty
+    category: incidents
+    url: https://your_account.pagerduty.com/services/PH99999
+    environment: Production
+  - name: Datadog
+    category: metrics
+    url: https://app.datadog.com/your_dashboard?env=prod
+    environment: Production
+  - name: Datadog
+    category: metrics
+    url: https://app.datadog.com/your_dashboard?env=staging
+    environment: Staging
+  dependencies:
+    - alias: recommendation_service
+      notes: Provides products recommendations to enhance the users shopping experience
+    - alias: suggestions_service
+  alert_sources:
+    - type: pagerduty
+      external_id: ABCD123
+    - type: opsgenie
+      external_id: 1234567-abcd-1234-abcdefgh1234
+    - type: datadog
+      external_id: 1234567
