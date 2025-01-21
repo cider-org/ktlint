@@ -57,18 +57,30 @@ log="/tmp/log.$org_and_name"
 
   # Pull newest changes
   echo "Cloning repository $repo" | tee -a $log
-  git clone --mirror "https://token:$TOKEN_FOR_GITHUB_COM@github.com/$org/$name.git" "/tmp/$org_and_name" &>> $log
+  if ! git clone --mirror "https://token:$TOKEN_FOR_GITHUB_COM@github.com/$org/$name.git" "/tmp/$org_and_name" &>> $log; then
+    echo "Error cloning repository $repo" | tee -a $log
+    repo-failed "$repo" "$(cat $log)"
+    exit 1
+  fi
   echo "     cloned" | tee -a $log
   cd "/tmp/$org_and_name"
 
   # remove refs/pull as they can't be pushed
   echo "Removing refs/pull" | tee -a $log
-  git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin &>> $log
+  if ! git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin &>> $log; then
+    echo "Error removing refs/pull" | tee -a $log
+    repo-failed "$repo" "$(cat $log)"
+    exit 1
+  fi
   echo "     refs/pull removed" | tee -a $log
 
   # Push everything except GitHub Actions and the script
   echo "Pushing to target repository $target_repo" | tee -a $log
-  git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" ':!*.github/workflows/*' ':!mirror.sh' &>> $log
+  if ! git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" ':!*.github/workflows/*' ':!mirror.sh' &>> $log; then
+    echo "Error pushing to target repository $target_repo" | tee -a $log
+    repo-failed "$repo" "$(cat $log)"
+    exit 1
+  fi
   echo "     pushed" | tee -a $log
 
   set-default-branch "$target_repo"
