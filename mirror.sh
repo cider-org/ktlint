@@ -56,15 +56,18 @@ log="/tmp/log.$org_and_name"
   echo "mirror $repo -> $github_server_url/$target_repo"
 
   # Pull newest changes
+  echo "Cloning repository $repo" | tee -a $log
   git clone --mirror "https://token:$TOKEN_FOR_GITHUB_COM@github.com/$org/$name.git" "/tmp/$org_and_name" &>> $log
-  echo "     cloned"
+  echo "     cloned" | tee -a $log
   cd "/tmp/$org_and_name"
 
   # remove refs/pull as they can't be pushed
+  echo "Removing refs/pull" | tee -a $log
   git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin &>> $log
   # Push everything except GitHub Actions and the script
+  echo "Pushing to target repository $target_repo" | tee -a $log
   git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" ':!*.github/workflows/*' ':!mirror.sh' &>> $log
-  echo "     pushed"
+  echo "     pushed" | tee -a $log
 
   set-default-branch "$target_repo"
 ) || repo-failed "$repo" "$(cat $log)"
