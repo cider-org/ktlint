@@ -19,7 +19,7 @@ jobs:
     - name: Mirror ${{ matrix.source-org }}
       run: ./mirror.sh ${{ matrix.source-org }}
       env:
-        TOKEN_FOR_GITHUB_COM: ${{ secrets.TOKEN_FOR_GITHUB_TOOLS_SAP }}
+        TOKEN_FOR_GITHUB_COM: ${{ secrets.TOKEN_FOR_GITHUB_COM }}
     
     - name: Send mirror fail message
       if: failure()
