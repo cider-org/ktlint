@@ -8,6 +8,8 @@ github_api_url="$github_server_url/api/v3"
 github_url="https://token:$TOKEN_FOR_GITHUB_COM@$github_server_url"
 max_repos=1
 
+echo "github_url $github_url"
+
 [[ -f .env ]] && source .env
 
 if [ -z "$TOKEN_FOR_GITHUB_COM" ]; then
