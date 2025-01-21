@@ -10,23 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false  
-      matrix:
-        source-org: ['leanix', 'leanix-public', 'cleanshelf']
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Mirror ${{ matrix.source-org }}
-      run: ./mirror.sh ${{ matrix.source-org }}
+    - name: Mirror
+      run: ./mirror.sh
       env:
         TOKEN_FOR_GITHUB_COM: ${{ secrets.TOKEN_FOR_GITHUB_COM }}
-    
-    - name: Send mirror fail message
-      if: failure()
-      uses: archive/github-actions-slack@v2.9.0
-      with:
-        slack-bot-user-oauth-access-token: ${{ secrets.SLACK_TOKEN }}
-        slack-channel: "#team-hook-status"
-        slack-text: |
-          :sos: Failed to mirror GitHub org ${{ matrix.source-org }} to SAP GitHub.
-          ${{ env.ACTION_URL }}
