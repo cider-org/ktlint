@@ -74,9 +74,9 @@ log="/tmp/log.$org_and_name"
   fi
   echo "     refs/pull removed" | tee -a $log
 
-  # Push everything except GitHub Actions and the script
+  # Push everything
   echo "Pushing to target repository $target_repo" | tee -a $log
-  if ! git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" ':!*.github/workflows/*' ':!mirror.sh' &>> $log; then
+  if ! git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" &>> $log; then
     echo "Error pushing to target repository $target_repo" | tee -a $log
     repo-failed "$repo" "$(cat $log)"
     exit 1
