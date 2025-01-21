@@ -53,7 +53,7 @@ log="/tmp/log.$org_and_name"
 
   # prepare logfile
   echo "" > $log
-  echo "mirror $repo -> $github_server_url/$target_repo"
+  echo "mirror $repo -> $github_server_url/$target_repo" | tee -a $log
 
   # Pull newest changes
   echo "Cloning repository $repo" | tee -a $log
@@ -64,6 +64,8 @@ log="/tmp/log.$org_and_name"
   # remove refs/pull as they can't be pushed
   echo "Removing refs/pull" | tee -a $log
   git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin &>> $log
+  echo "     refs/pull removed" | tee -a $log
+
   # Push everything except GitHub Actions and the script
   echo "Pushing to target repository $target_repo" | tee -a $log
   git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" ':!*.github/workflows/*' ':!mirror.sh' &>> $log
