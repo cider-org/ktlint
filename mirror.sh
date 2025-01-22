@@ -74,9 +74,19 @@ log="/tmp/log.$org_and_name"
   fi
   echo "     refs/pull removed" | tee -a $log
 
-  # Push everything except GitHub Actions and the script
+  # Remove unwanted files
+  echo "Removing unwanted files" | tee -a $log
+  git filter-repo --path .github/workflows --invert-paths &>> $log
+  git filter-repo --path mirror.sh --invert-paths &>> $log
+  echo "     unwanted files removed" | tee -a $log
+
+  # Push everything to the target repository
   echo "Pushing to target repository $target_repo" | tee -a $log
-  git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" &>> $log
+  if ! git -c http.version=HTTP/1.1 push --mirror --force --prune "$github_url/$target_repo" &>> $log; then
+    echo "Error pushing to target repository $target_repo" | tee -a $log
+    repo-failed "$repo" "$(cat $log)"
+    exit 1
+  fi
   echo "     pushed" | tee -a $log
 
   set-default-branch "$target_repo"
