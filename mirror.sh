@@ -21,6 +21,12 @@ fi
 
 cd $SOURCE_REPO.git
 
+# Remove pull request refs
+echo "Removing pull request refs..."
+for ref in $(git for-each-ref --format='%(refname)' refs/pull); do
+    git update-ref -d $ref
+done
+
 # Push the mirror to the target repository
 echo "Pushing the mirror to the target repository..."
 if git push --mirror https://$GITHUB_TOKEN@github.com/$ORG_NAME/$TARGET_REPO.git; then
