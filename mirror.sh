@@ -8,7 +8,7 @@ GITHUB_TOKEN=$TOKEN_FOR_GITHUB_COM  # Replace with your GitHub token
 
 # Log the repository URLs
 echo "Source repository URL: https://github.com/$ORG_NAME/$SOURCE_REPO.git"
-echo "Target repository URL: https://github.com/$ORG_NAME/$TARGET_REPO.git"
+echo "Target repository URL: https://$GITHUB_TOKEN@github.com/$ORG_NAME/$TARGET_REPO.git"
 
 # Clone the source repository as a mirror
 echo "Cloning the source repository..."
@@ -23,7 +23,7 @@ cd $SOURCE_REPO.git
 
 # Push the mirror to the target repository
 echo "Pushing the mirror to the target repository..."
-if git push --mirror https://github.com/$ORG_NAME/$TARGET_REPO.git; then
+if git push --mirror https://$GITHUB_TOKEN@github.com/$ORG_NAME/$TARGET_REPO.git; then
     echo "Successfully pushed the mirror to the target repository."
 else
     echo "Failed to push the mirror to the target repository."
