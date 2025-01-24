@@ -1,0 +1,23 @@
+name: mirror-repos-2
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '42 2 * * *'
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set executable permissions for mirror.sh
+      run: chmod +x mirror.sh
+
+    - name: Mirror
+      run: ./mirror.sh
+      env:
+        TOKEN_FOR_GITHUB_COM: ${{ secrets.TOKEN_FOR_GITHUB_COM }}
