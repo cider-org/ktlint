@@ -1,2 +1,3 @@
 Text.
 New line.
+Text file 4.
